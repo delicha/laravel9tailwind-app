@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use App\Models\Participation;
 
 class Post extends Model
 {
@@ -51,19 +52,24 @@ class Post extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function participations()
+    {
+        return $this->belongsToMany(Participation::class, 'participations', 'post_id', 'user_id');
+    }
+
     /**
      * 投稿データを全て取得し、最新更新日時順にソート。総合トップ画面に表示する記事はステータス「公開」(publish_flg=1)のみ
      */
     public function getPostsSortByLatestUpdate()
     {
         $result = $this->where([
-                            ['publish_flg', 1],
-                            ['delete_flg', 0],
-                        ])
-                        ->orderBy('updated_at', 'DESC')
-                        ->with('user')
-                        ->with('category')
-                        ->get();
+            ['publish_flg', 1],
+            ['delete_flg', 0],
+        ])
+            ->orderBy('updated_at', 'DESC')
+            ->with('user')
+            ->with('category')
+            ->get();
         return $result;
     }
 
@@ -75,10 +81,10 @@ class Post extends Model
     public function getPostByCategoryId($category_id)
     {
         $result = $this->where([
-                            ['category_id', $category_id],
-                            ['delete_flg', 0],
-                        ])
-                        ->get();
+            ['category_id', $category_id],
+            ['delete_flg', 0],
+        ])
+            ->get();
         return $result;
     }
 
@@ -91,12 +97,12 @@ class Post extends Model
     public function getAllPostsByUserId($user_id)
     {
         $result = $this->where([
-                            ['user_id', $user_id],
-                            ['delete_flg', 0],
-                        ])
-                        ->with('category')
-                        ->orderBy('updated_at', 'DESC')
-                        ->get();
+            ['user_id', $user_id],
+            ['delete_flg', 0],
+        ])
+            ->with('category')
+            ->orderBy('updated_at', 'DESC')
+            ->get();
         return $result;
     }
 
@@ -256,10 +262,10 @@ class Post extends Model
     public function getTrashPostLists($user_id)
     {
         $result = $this->where([
-                            ['user_id', $user_id],
-                            ['delete_flg', 1],
-                        ])
-                        ->get();
+            ['user_id', $user_id],
+            ['delete_flg', 1],
+        ])
+            ->get();
 
         return $result;
     }
@@ -317,24 +323,24 @@ class Post extends Model
     public function getSaveDraftPosts($user_id)
     {
         $result = $this->where([
-                            ['user_id', $user_id],
-                            ['publish_flg', 0],
-                            ['delete_flg', 0]
-                        ])
-                        ->orderBy('updated_at', 'DESC')
-                        ->get();
+            ['user_id', $user_id],
+            ['publish_flg', 0],
+            ['delete_flg', 0]
+        ])
+            ->orderBy('updated_at', 'DESC')
+            ->get();
         return $result;
     }
 
     public function getReleasePosts($user_id)
     {
         $result = $this->where([
-                            ['user_id', $user_id],
-                            ['publish_flg', 1],
-                            ['delete_flg', 0]
-                        ])
-                        ->orderBy('updated_at', 'DESC')
-                        ->get();
+            ['user_id', $user_id],
+            ['publish_flg', 1],
+            ['delete_flg', 0]
+        ])
+            ->orderBy('updated_at', 'DESC')
+            ->get();
         return $result;
     }
 
@@ -347,12 +353,12 @@ class Post extends Model
     public function getReservationReleasePosts($user_id)
     {
         $result = $this->where([
-                            ['user_id', $user_id],
-                            ['publish_flg', 2],
-                            ['delete_flg', 0]
-                        ])
-                        ->orderBy('updated_at', 'DESC')
-                        ->get();
+            ['user_id', $user_id],
+            ['publish_flg', 2],
+            ['delete_flg', 0]
+        ])
+            ->orderBy('updated_at', 'DESC')
+            ->get();
         return $result;
     }
 }
