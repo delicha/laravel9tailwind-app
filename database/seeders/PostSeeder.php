@@ -19,6 +19,8 @@ class PostSeeder extends Seeder
     {
         $table = DB::table('posts');
 
+        Schema::disableForeignKeyConstraints();
+
         $table->truncate();
 
         $now = Carbon::now();
@@ -76,5 +78,7 @@ class PostSeeder extends Seeder
         ];
 
         $table->insert($data);
+
+        Schema::enableForeignKeyConstraints();
     }
 }
