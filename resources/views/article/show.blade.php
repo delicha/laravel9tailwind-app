@@ -18,7 +18,9 @@
             $segments = explode('/', request()->path());
             $postId = end($segments);
         @endphp
-        <a href="{{ route('participation.create', ['post_id' => $postId]) }}">参加申し込み</a>
+        @if(Auth::check())
+            <a href="{{ route('stripe.subscription', ['post_id' => $postId]) }}">参加申し込み</a>
+        @endif
         <p class="mt-8 text-gray-600">{{ $post->body }}</p>
     </div>
 </div>
