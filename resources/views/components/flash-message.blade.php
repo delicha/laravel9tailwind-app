@@ -49,3 +49,10 @@
         {{ session('delete') }}
     </div>
 @endif
+
+{{-- ゴミ箱：記事を削除 --}}
+@if (session('participation'))
+    <div class="bg-amber-200 border-t border-b border-amber-500 text-amber-700 text-center px-4 py-3 font-bold">
+        {{ session('participation') }}
+    </div>
+@endif
