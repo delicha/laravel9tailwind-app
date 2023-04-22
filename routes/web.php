@@ -7,6 +7,7 @@ use App\Http\Controllers\User\PostController;
 use App\Http\Controllers\User\TrashController;
 use App\Http\Controllers\User\ReservationPostController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StripeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -133,3 +134,9 @@ Route::controller(ParticipationController::class)->group(function () {
     Route::post('/participation/edit/{post_id}', 'update')
         ->name('participation.update');
 });
+
+// Stripe
+Route::post('/charge', [StripeController::class, 'charge'])->name('stripe.charge');
+
+Route::get('/subscription', [StripeController::class, 'subscription'])->name('stripe.subscription');
+Route::post('/subscription/afterpay', [StripeController::class, 'afterpay'])->name('stripe.afterpay');
