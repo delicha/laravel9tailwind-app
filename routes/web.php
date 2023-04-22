@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TopController;
+use App\Http\Controllers\ParticipationController;
 use App\Http\Controllers\User\PostController;
 use App\Http\Controllers\User\TrashController;
 use App\Http\Controllers\User\ReservationPostController;
@@ -28,10 +29,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 // 総合トップ
-Route::controller(TopController::class)->group(function() {
+Route::controller(TopController::class)->group(function () {
     // 総合トップ画面
     Route::get('/', 'top')
         ->name('top');
@@ -44,7 +45,7 @@ Route::controller(TopController::class)->group(function() {
 });
 
 // マイページ投稿関係
-Route::controller(PostController::class)->group(function() {
+Route::controller(PostController::class)->group(function () {
     // マイページトップ・投稿
     Route::get('/user/{id}/index', 'index')
         ->name('user.index');
@@ -83,7 +84,7 @@ Route::controller(PostController::class)->group(function() {
 });
 
 // ゴミ箱関係
-Route::controller(TrashController::class)->group(function() {
+Route::controller(TrashController::class)->group(function () {
     // 記事のゴミ箱
     Route::get('/post/trash', 'trashList')
         ->name('post.trash');
@@ -102,7 +103,7 @@ Route::controller(TrashController::class)->group(function() {
 });
 
 // 予約公開
-Route::controller(ReservationPostController::class)->group(function() {
+Route::controller(ReservationPostController::class)->group(function () {
     // 公開予約設定画面
     Route::get('/reservation/post/setting', 'reservationSetting')
         ->name('reservation.post');
@@ -115,4 +116,20 @@ Route::controller(ReservationPostController::class)->group(function() {
     // 公開予約設定更新
     Route::post('/reservation/post/edit/{post_id}', 'reservationUpdate')
         ->name('reservation.post.update');
+});
+
+// 参加
+Route::controller(ParticipationController::class)->group(function () {
+    // 公開予約設定画面
+    Route::get('/participation/create', 'create')
+        ->name('participation.create');
+    // 公開予約設定処理
+    Route::post('/participation/store', 'store')
+        ->name('participation.store');
+    // 公開予約設定編集画面
+    Route::get('/participation/edit/{post_id}', 'edit')
+        ->name('participation.edit');
+    // 公開予約設定更新
+    Route::post('/participation/edit/{post_id}', 'update')
+        ->name('participation.update');
 });
