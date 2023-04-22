@@ -2,11 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Participation;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Models\Post;
+use App\Models\Category;
+use App\Models\Participation;
+use App\Models\ReservationPost;
+use App\Http\Requests\PostRequest;
 
 class ParticipationController extends Controller
 {
+    private $post;
+    private $category;
+    private $reservationPost;
+    private $participation;
+
+    public function __construct()
+    {
+        $this->post = new Post();
+        $this->category = new Category();
+        $this->reservationPost = new ReservationPost();
+        $this->participation = new Participation();
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -24,7 +43,12 @@ class ParticipationController extends Controller
      */
     public function create()
     {
-        //
+        $categories = $this->category->getAllCategories();
+        // ログインしているユーザー情報を取得
+        $user = Auth::user();
+        // ログインユーザー情報からユーザーIDを取得
+        $user_id = $user->id;
+        return view('participation.create', compact('categories', 'user_id', 'user'));
     }
 
     /**
@@ -35,7 +59,15 @@ class ParticipationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // ログインしているユーザー情報を取得
+        $user = Auth::user();
+        // ログインユーザー情報からユーザーIDを取得
+        $user_id = $user->id;
+
+        $this->participation->insertParticipation($user_id, $request);
+        $request->session()->flash('participation', '参加しました。');
+
+        return to_route('top');
     }
 
     /**
@@ -57,7 +89,7 @@ class ParticipationController extends Controller
      */
     public function edit(Participation $participation)
     {
-        //
+        return view('participation.edit');
     }
 
     /**
@@ -69,7 +101,11 @@ class ParticipationController extends Controller
      */
     public function update(Request $request, Participation $participation)
     {
-        //
+        // ログインしているユーザー情報を取得
+        $user = Auth::user();
+        // ログインユーザー情報からユーザーIDを取得
+        $user_id = $user->id;
+        return view('participation.update');
     }
 
     /**

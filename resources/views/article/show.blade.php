@@ -14,6 +14,11 @@
 
     <div class="mt-2">
         <p class="text-2xl font-bold text-gray-800">{{ $post->title }}</p>
+        @php
+            $segments = explode('/', request()->path());
+            $postId = end($segments);
+        @endphp
+        <a href="{{ route('participation.create', ['post_id' => $postId]) }}">参加申し込み</a>
         <p class="mt-8 text-gray-600">{{ $post->body }}</p>
     </div>
 </div>

@@ -3,13 +3,13 @@
 
 @include('user.parts.sidebar_user')
 @section('content')
-{{-- 投稿：下書き保存 --}}
+{{-- イベント：下書き保存 --}}
 @component('components.flash-message')
 @endcomponent
 <div class="h-screen overflow-y-scroll">
     <div class="px-4 sm:px-4">
         <div class="flex justify-between">
-            <div class="text-2xl font-bold pt-7">投稿</div>
+            <div class="text-2xl font-bold pt-7">イベント</div>
             <div class="pt-4">
                 <a href="{{ route('post.create') }}">
                     <button class="bg-blue-500 text-white px-4 py-2 rounded-md text-1xl font-medium hover:bg-blue-700 transition duration-300">
@@ -28,7 +28,7 @@
                                     タイトル
                                 </th>
                                 <th scope="col" class="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-center text-sm uppercase font-normal">
-                                    投稿ID
+                                    イベントID
                                 </th>
                                 <th scope="col" class="px-5 py-3 bg-white  border-b border-gray-200 text-gray-800  text-center text-sm uppercase font-normal">
                                     カテゴリー

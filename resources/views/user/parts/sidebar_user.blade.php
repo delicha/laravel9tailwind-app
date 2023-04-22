@@ -44,7 +44,8 @@
                         </svg>
                     </span>
                     <span class="mx-2 text-md font-normal">
-                        投稿
+                        イベント<br />
+                        参加数:{{ $count }}
                     </span>
                 </a>
             </div>

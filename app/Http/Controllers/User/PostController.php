@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Category;
+use App\Models\Participation;
 use App\Models\ReservationPost;
 use App\Http\Requests\PostRequest;
 
@@ -15,17 +16,26 @@ class PostController extends Controller
     private $post;
     private $category;
     private $reservationPost;
+    private $participation;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->post = new Post();
         $this->category = new Category();
         $this->reservationPost = new ReservationPost();
+        $this->participation = new Participation();
     }
 
-    public function index(int $id) {
+    public function index(int $id)
+    {
+        // ログインしているユーザー情報を取得
+        $user = Auth::user();
+        // ログインユーザー情報からユーザーIDを取得
+        $user_id = $user->id;
         // ユーザーIDと一致する投稿データを取得
         $posts = $this->post->getAllPostsByUserId($id);
-        return view('user.list.index', compact('posts'));
+        $count = $this->participation->where('user_id', $id)->count();
+        return view('user.list.index', compact('posts', 'count', 'user_id'));
     }
 
     /**
@@ -34,7 +44,12 @@ class PostController extends Controller
     public function create()
     {
         $categories = $this->category->getAllCategories();
-        return view('user.list.create', compact('categories',));
+        // ログインしているユーザー情報を取得
+        $user = Auth::user();
+        // ログインユーザー情報からユーザーIDを取得
+        $user_id = $user->id;
+        $count = $this->participation->where('user_id', $user_id)->count();
+        return view('user.list.create', compact('categories', 'count', 'user_id'));
     }
 
     /**
@@ -73,7 +88,7 @@ class PostController extends Controller
                 $request->session()->flash('saveDraft', '記事を下書きで保存しました。');
                 break;
         }
-        
+
         return to_route('user.index', ['id' => $user_id]);
     }
 
@@ -83,9 +98,11 @@ class PostController extends Controller
      * @param int $post_id 投稿ID
      * @return Response src/resources/views/user/list/show.blade.phpを表示
      */
-    public function show($post_id) {
+    public function show($post_id)
+    {
         // リクエストされた投稿IDをもとにpostsテーブルから一意のデータを取得
         $showPostData = $this->post->fetchPostDataByPostId($post_id);
+        $count = $this->participation->where('user_id', $id)->count();
         return view('user.list.show', compact(
             'showPostData',
         ));
@@ -97,7 +114,8 @@ class PostController extends Controller
      * @param int $post_id 投稿ID
      * @return Response src/resources/views/user/list/edit.blade.phpを表示
      */
-    public function edit($post_id) {
+    public function edit($post_id)
+    {
         // ログインしているユーザー情報を取得
         $user = Auth::user();
         // ログインユーザー情報からユーザーIDを取得
@@ -123,7 +141,7 @@ class PostController extends Controller
             // (20220530→30)
             $day = substr($reservationPost->reservation_date, 6, 2);
             // 上記に年月日をつける(2022年05月30日)
-            $date = $year.'年'.$month.'月'.$day;
+            $date = $year . '年' . $month . '月' . $day;
 
             // 時・分にそれぞれ文字を切り出し
             // (083200→08)
@@ -131,7 +149,7 @@ class PostController extends Controller
             // (083200→32)
             $minute = substr($reservationPost->reservation_time, 2, 2);
             // 上記に時・分をつける
-            $time = $hour.'時'.$minute.'分';
+            $time = $hour . '時' . $minute . '分';
         }
         return view('user.list.edit', compact(
             'post',
@@ -161,7 +179,7 @@ class PostController extends Controller
         $reservationPost = $this->reservationPost->getReservationPostByUserIdAndPostId($user_id, $post_id);
 
         switch (true) {
-            // 下書き保存クリック時の処理
+                // 下書き保存クリック時の処理
             case $request->has('save_draft'):
                 $this->post->updatePostToSaveDraft($request, $post);
                 // 上記でもしデータがあれば、ステータスを下書きに戻すため予約公開データは不要のため削除する
@@ -171,7 +189,7 @@ class PostController extends Controller
                 }
                 $request->session()->flash('updateSaveDraft', '記事を下書き保存で更新しました。');
                 break;
-            // 公開クリック時の処理
+                // 公開クリック時の処理
             case $request->has('release'):
                 $this->post->updatePostToRelease($request, $post);
                 // 上記でもしデータがあれば、ステータスを公開にするため予約公開データは不要のため削除する
@@ -181,12 +199,12 @@ class PostController extends Controller
                 }
                 $request->session()->flash('updateRelease', '記事を更新し公開しました。');
                 break;
-            // 予約公開クリック時の処理
-            // case $request->has('reservation_release'):
-            //     $this->post->updatePostToReservationRelease($request, $post);
-            //     $request->session()->flash('updateReservationRelease', '記事を予約公開で更新しました。');
-            //     break;
-            // 上記以外の処理
+                // 予約公開クリック時の処理
+                // case $request->has('reservation_release'):
+                //     $this->post->updatePostToReservationRelease($request, $post);
+                //     $request->session()->flash('updateReservationRelease', '記事を予約公開で更新しました。');
+                //     break;
+                // 上記以外の処理
             default:
                 $this->post->updatePostToSaveDraft($request, $post);
                 // 上記でもしデータがあれば、ステータスを下書きに戻すため予約公開データは不要のため削除する
@@ -254,5 +272,4 @@ class PostController extends Controller
             'reservationPosts',
         ));
     }
-
 }
