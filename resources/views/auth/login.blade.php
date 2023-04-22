@@ -46,10 +46,13 @@
 
             <div class="flex items-center justify-end mt-12">
                 @if (Route::has('password.request'))
-                    <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('password.request') }}">
+                    <a class="underline text-sm text-gray-600 hover:text-gray-900 mr-1" href="{{ route('password.request') }}">
                         {{ __('パスワードを忘れた場合はこちら') }}
                     </a>
                 @endif
+                <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('register') }}">
+                    {{ __('新規会員登録はこちら') }}
+                </a>
 
                 <x-primary-button class="ml-3">
                     {{ __('ログイン') }}
